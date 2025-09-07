@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8'?>
+<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+<channel>
+    <title>Anesis - Méditations guidées</title>
+    <description>Méditations guidées apaisantes pour le quotidien.</description>
+    <language>fr-FR</language>
+    <itunes:author>Nestr</itunes:author>
+    <itunes:summary>Podcasts personnalisés de 0bc3ef56-a182-480e-bdb3-4c2b7bd96960</itunes:summary>
+    <itunes:explicit>false</itunes:explicit>
+    <itunes:type>episodic</itunes:type>
+    <itunes:category text="Education" />
+    <itunes:image href="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/cover.png" />
+    
+    <link>https://anesis.example.com</link>
+    <lastBuildDate>Sun, 07 Sep 2025 00:33:58 GMT</lastBuildDate>
+    <pubDate>Sun, 07 Sep 2025 00:33:58 GMT</pubDate>
+    <ttl>60</ttl>
+    <generator>Nestr Noesis API</generator>
+    
+    <image>
+        <url>https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/cover.png</url>
+        <title>Anesis - Méditations guidées</title>
+        <link>https://anesis.example.com</link>
+    </image>
+    
+    <item>
+        <title>Méditation pour apaiser la jalousie</title>
+        <description>Découvrez une méditation guidée pour réduire la jalousie dans votre couple et cultiver la confiance et l'amour.</description>
+        <pubDate>Sun, 07 Sep 2025 00:33:58 GMT</pubDate>
+        <guid isPermaLink="false">5d387bbf-b0b8-4ecc-92d9-2be41732ecb4</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250906-203348-FPm1oDC_7ima5JEqQYU_I.mp3" type="audio/mpeg" length="2820000" />
+        <itunes:title>Méditation pour apaiser la jalousie</itunes:title>
+        <itunes:summary>Découvrez une méditation guidée pour réduire la jalousie dans votre couple et cultiver la confiance et l'amour.</itunes:summary>
+        <itunes:duration>47:00</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    
+    <item>
+        <title>Dis moi qui est president de</title>
+        <description>Podcast généré automatiquement sur le thème : Dis moi qui est president de la france en etant le plus court et concis possible</description>
+        <pubDate>Sat, 06 Sep 2025 02:32:28 +0000</pubDate>
+        <guid isPermaLink="false">4e4d1db8-508c-4434-9223-1e9ed8373615</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250905-223226-nYLM1r9cOo6smHHvIMHWE.mp3" type="audio/mpeg" length="180000" />
+        <itunes:title>Dis moi qui est president de</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Dis moi qui est president de la france en etant le plus court et concis possible</itunes:summary>
+        <itunes:duration>03:00</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    
+    <item>
+        <title>Healthy Sexuality Meditation</title>
+        <description>Méditations guidées apaisantes pour le quotidien.</description>
+        <pubDate>Sat, 06 Sep 2025 12:27:16 -0400</pubDate>
+        <guid isPermaLink="false">https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/healthy_sexuality_meditation.mp3</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/healthy_sexuality_meditation.mp3" type="audio/mpeg" length="1677000" />
+        <itunes:duration>27:57</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+</channel>
+</rss>

@@ -1,0 +1,46 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nester-noesis"
+version = "0.1.0"
+description = "Service FastAPI pour Nestr - génération de podcasts avec OpenAI et Supabase"
+authors = [{name = "Nestr Team"}]
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.104.0",
+    "uvicorn[standard]>=0.24.0",
+    "gunicorn>=21.2.0",
+    "httpx>=0.25.0",
+    "pydantic>=2.5.0",
+    "pydantic-settings>=2.1.0",
+    "python-dotenv>=1.0.0",
+    "supabase>=2.3.0",
+    "openai>=1.3.0",
+    "python-dateutil>=2.8.0",
+    "nanoid>=2.0.0",
+    "psutil>=5.9.6",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "black>=23.0.0",
+    "isort>=5.12.0",
+    "flake8>=6.0.0",
+]
+
+[tool.black]
+line-length = 88
+target-version = ['py311']
+
+[tool.isort]
+profile = "black"
+line_length = 88
+
+[project.scripts]
+nestr-dev = "start_dev:main"
+nestr-prod = "start_prod:main"
+nestr-server = "server:main"
