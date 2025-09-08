@@ -17,7 +17,7 @@ class WellnessPipeline(BasePipeline):
     # Configuration audio optimisée pour réduire la taille des fichiers
     AUDIO_CONFIG = {
         "sample_rate": 22050,     # Réduit de 44.1kHz à 22kHz
-        "background_volume": 0.95,
+        "background_volume": 0.3,
         "tts_volume_boost": 1.2,
         "save_wav": False,        # Désactive WAV (gros gain)
         "save_mp3": True,

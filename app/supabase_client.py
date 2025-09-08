@@ -198,7 +198,7 @@ class SupabaseManager:
                         file=f,
                         file_options={
                             "contentType": content_type,
-                            "upsert": True
+                            "upsert": "true"
                         }
                     )
                 

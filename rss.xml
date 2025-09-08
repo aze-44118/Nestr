@@ -1,61 +1,153 @@
-<?xml version='1.0' encoding='utf-8'?>
-<rss xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" version="2.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" 
+     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+     xmlns:content="http://purl.org/rss/1.0/modules/content/"
+     xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
-    <title>Anesis - Méditations guidées</title>
-    <description>Méditations guidées apaisantes pour le quotidien.</description>
-    <language>fr-FR</language>
+    <title>Nestr – 0bc3ef56-a182-480e-bdb3-4c2b7bd96960</title>
+    <description>Podcasts personnalisés de 0bc3ef56-a182-480e-bdb3-4c2b7bd96960</description>
+    <language>fr</language>
+    <itunes:language>fr-fr</itunes:language>
     <itunes:author>Nestr</itunes:author>
     <itunes:summary>Podcasts personnalisés de 0bc3ef56-a182-480e-bdb3-4c2b7bd96960</itunes:summary>
     <itunes:explicit>false</itunes:explicit>
     <itunes:type>episodic</itunes:type>
-    <itunes:category text="Education" />
-    <itunes:image href="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/cover.png" />
+    <itunes:category text="Education"/>
     
-    <link>https://anesis.example.com</link>
-    <lastBuildDate>Sun, 07 Sep 2025 00:33:58 GMT</lastBuildDate>
-    <pubDate>Sun, 07 Sep 2025 00:33:58 GMT</pubDate>
+    <link>https://nest.noesis.app</link>
+    <lastBuildDate>Mon, 08 Sep 2025 20:53:39 +0000</lastBuildDate>
+    <pubDate>Mon, 08 Sep 2025 20:53:39 +0000</pubDate>
     <ttl>60</ttl>
     <generator>Nestr Noesis API</generator>
-    
-    <image>
-        <url>https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/cover.png</url>
-        <title>Anesis - Méditations guidées</title>
-        <link>https://anesis.example.com</link>
-    </image>
-    
+    <item>
+        <title>Crée un podcast sur le concepte de volonté</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Crée un podcast sur le concepte de representation et de volonté dans la philosophie]]></description>
+        <pubDate>Mon, 08 Sep 2025 20:53:38 +0000</pubDate>
+        <guid isPermaLink="false">80387153-aef5-4950-95b2-8a6c8ddbf50d</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250908-165337-jTRQGkIrkcFLXV0r6L_iG.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Crée un podcast sur le concepte de representation et de volonté dans la philosophie</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Crée un podcast sur le concepte de representation</itunes:summary>
+        <itunes:duration>00:58</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Crée un podcast sur le concepte</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Crée un podcast sur le concepte de representation et de volonté dans la philosophie]]></description>
+        <pubDate>Mon, 08 Sep 2025 20:43:55 +0000</pubDate>
+        <guid isPermaLink="false">f58fdb2e-f3b2-4531-ae35-e7d967ab8bc0</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250908-164354-_eM4CkeeMeC7Vi88DjrQP.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Crée un podcast sur le concepte</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Crée un podcast sur le concepte de representation et de volonté dans la philosophie</itunes:summary>
+        <itunes:duration>01:21</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Crée un podcast sur le structuralisme</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Crée un podcast sur le structuralisme dans la philosophie du langage]]></description>
+        <pubDate>Mon, 08 Sep 2025 19:37:20 +0000</pubDate>
+        <guid isPermaLink="false">0ded0ecf-df98-46ba-9270-2f67edb27d17</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250908-153719-CY1byWQMvE0bL5vwf08zw.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Crée un podcast sur le structuralisme</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Crée un podcast sur le structuralisme dans la philosophie du langage</itunes:summary>
+        <itunes:duration>01:17</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Crée un podcast sur l&apos;existentialisme chrétien</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Crée un podcast sur l'existentialisme chrétien]]></description>
+        <pubDate>Mon, 08 Sep 2025 18:23:22 +0000</pubDate>
+        <guid isPermaLink="false">05065828-4843-4d67-aa50-250caeb125aa</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250908-142321-m51ZWoEyPIGSi-il2BOaN.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Crée un podcast sur l&apos;existentialisme chrétien</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Crée un podcast sur l&apos;existentialisme chrétien</itunes:summary>
+        <itunes:duration>02:44</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Crée un podcast sur l&apos;existentialisme chrétien</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Crée un podcast sur l'existentialisme chrétien]]></description>
+        <pubDate>Mon, 08 Sep 2025 18:16:28 +0000</pubDate>
+        <guid isPermaLink="false">7edd2a9b-09df-4966-84ca-305b8c802862</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250908-141627-rlGOULSXhrIjXjQMISGXw.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Crée un podcast sur l&apos;existentialisme chrétien</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Crée un podcast sur l&apos;existentialisme chrétien</itunes:summary>
+        <itunes:duration>01:37</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Méditation Apaisante pour un Sommeil Réparateur</title>
+        <description><![CDATA[Découvrez cette méditation guidée pour vous aider à trouver le sommeil paisiblement et vous détendre en profondeur.]]></description>
+        <pubDate>Mon, 08 Sep 2025 18:06:18 +0000</pubDate>
+        <guid isPermaLink="false">1190c01b-4a66-412c-a542-b282f726ec06</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250908-140617-yZ2bpxErppkZrsZad-278.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Méditation Apaisante pour un Sommeil Réparateur</itunes:title>
+        <itunes:summary>Découvrez cette méditation guidée pour vous aider à trouver le sommeil paisiblement et vous détendre en profondeur.</itunes:summary>
+        <itunes:duration>05:19</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Méditation pour la Confiance en Soi</title>
+        <description><![CDATA[Un podcast pour renforcer votre confiance en vous, en société et en public, à travers des techniques d'auto-hypnose et de méditation guidée.]]></description>
+        <pubDate>Sun, 07 Sep 2025 16:13:43 +0000</pubDate>
+        <guid isPermaLink="false">72cad8dd-60bc-46cc-9983-a8bb4a3f3409</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250907-121236-kydfwe-RrVqPi685Tz-nh.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Méditation pour la Confiance en Soi</itunes:title>
+        <itunes:summary>Un podcast pour renforcer votre confiance en vous, en société et en public, à travers des techniques d&apos;auto-hypnose et de méditation guidée.</itunes:summary>
+        <itunes:duration>05:38</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
     <item>
         <title>Méditation pour apaiser la jalousie</title>
-        <description>Découvrez une méditation guidée pour réduire la jalousie dans votre couple et cultiver la confiance et l'amour.</description>
-        <pubDate>Sun, 07 Sep 2025 00:33:58 GMT</pubDate>
+        <description><![CDATA[Découvrez une méditation guidée pour réduire la jalousie dans votre couple et cultiver la confiance et l'amour.]]></description>
+        <pubDate>Sun, 07 Sep 2025 00:33:57 +0000</pubDate>
         <guid isPermaLink="false">5d387bbf-b0b8-4ecc-92d9-2be41732ecb4</guid>
-        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250906-203348-FPm1oDC_7ima5JEqQYU_I.mp3" type="audio/mpeg" length="2820000" />
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250906-203348-FPm1oDC_7ima5JEqQYU_I.mp3" type="audio/mpeg" length="0"/>
         <itunes:title>Méditation pour apaiser la jalousie</itunes:title>
-        <itunes:summary>Découvrez une méditation guidée pour réduire la jalousie dans votre couple et cultiver la confiance et l'amour.</itunes:summary>
+        <itunes:summary>Découvrez une méditation guidée pour réduire la jalousie dans votre couple et cultiver la confiance et l&apos;amour.</itunes:summary>
         <itunes:duration>47:00</itunes:duration>
         <itunes:explicit>false</itunes:explicit>
         <itunes:episodeType>full</itunes:episodeType>
     </item>
-    
     <item>
-        <title>Dis moi qui est president de</title>
-        <description>Podcast généré automatiquement sur le thème : Dis moi qui est president de la france en etant le plus court et concis possible</description>
-        <pubDate>Sat, 06 Sep 2025 02:32:28 +0000</pubDate>
-        <guid isPermaLink="false">4e4d1db8-508c-4434-9223-1e9ed8373615</guid>
-        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250905-223226-nYLM1r9cOo6smHHvIMHWE.mp3" type="audio/mpeg" length="180000" />
-        <itunes:title>Dis moi qui est president de</itunes:title>
-        <itunes:summary>Podcast généré automatiquement sur le thème : Dis moi qui est president de la france en etant le plus court et concis possible</itunes:summary>
+        <title>Vaincre la Jalousie dans le Couple</title>
+        <description><![CDATA[Découvrez des techniques d'auto-hypnose pour surmonter la jalousie et renforcer votre confiance en vous et dans votre relation.]]></description>
+        <pubDate>Sat, 06 Sep 2025 22:42:12 +0000</pubDate>
+        <guid isPermaLink="false">f2e833bf-bb66-4ed1-bae4-fd77dd6be05a</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250906-184211-gTfTi8j8bPpxl8higLh15.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Vaincre la Jalousie dans le Couple</itunes:title>
+        <itunes:summary>Découvrez des techniques d&apos;auto-hypnose pour surmonter la jalousie et renforcer votre confiance en vous et dans votre relation.</itunes:summary>
+        <itunes:duration>01:24</itunes:duration>
+        <itunes:explicit>false</itunes:explicit>
+        <itunes:episodeType>full</itunes:episodeType>
+    </item>
+    <item>
+        <title>Crée un podcast pour m aider</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Crée un podcast pour m aider à l arret de la masturbation]]></description>
+        <pubDate>Sat, 06 Sep 2025 21:21:05 +0000</pubDate>
+        <guid isPermaLink="false">2db2db94-fb20-4733-893f-6a974318e093</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250906-172104-atmu1G95F5lRkHsdImqBn.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Crée un podcast pour m aider</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Crée un podcast pour m aider à l arret de la masturbation</itunes:summary>
         <itunes:duration>03:00</itunes:duration>
         <itunes:explicit>false</itunes:explicit>
         <itunes:episodeType>full</itunes:episodeType>
     </item>
-    
     <item>
-        <title>Healthy Sexuality Meditation</title>
-        <description>Méditations guidées apaisantes pour le quotidien.</description>
-        <pubDate>Sat, 06 Sep 2025 12:27:16 -0400</pubDate>
-        <guid isPermaLink="false">https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/healthy_sexuality_meditation.mp3</guid>
-        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/healthy_sexuality_meditation.mp3" type="audio/mpeg" length="1677000" />
-        <itunes:duration>27:57</itunes:duration>
+        <title>Dis moi qui est president de</title>
+        <description><![CDATA[Podcast généré automatiquement sur le thème : Dis moi qui est president de la france en etant le plus court et concis possible]]></description>
+        <pubDate>Sat, 06 Sep 2025 02:32:28 +0000</pubDate>
+        <guid isPermaLink="false">4e4d1db8-508c-4434-9223-1e9ed8373615</guid>
+        <enclosure url="https://qmuaatlwtuawlmdqzlqn.supabase.co/storage/v1/object/public/podcasts/0bc3ef56-a182-480e-bdb3-4c2b7bd96960/20250905-223226-nYLM1r9cOo6smHHvIMHWE.mp3" type="audio/mpeg" length="0"/>
+        <itunes:title>Dis moi qui est president de</itunes:title>
+        <itunes:summary>Podcast généré automatiquement sur le thème : Dis moi qui est president de la france en etant le plus court et concis possible</itunes:summary>
+        <itunes:duration>03:00</itunes:duration>
         <itunes:explicit>false</itunes:explicit>
         <itunes:episodeType>full</itunes:episodeType>
     </item>

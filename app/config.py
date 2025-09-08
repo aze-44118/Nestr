@@ -49,6 +49,21 @@ class Settings(BaseSettings):
     rss_cover_url: str = Field(default="", env="RSS_COVER_URL")
     rss_site_url: str = Field(default="https://nest.noesis.app", env="RSS_SITE_URL")
     rss_ttl_minutes: int = Field(default=60, env="RSS_TTL_MINUTES")
+
+    # Génération (centralisée)
+    gen_default_model: str = Field(default="gpt-4o-mini", env="GEN_DEFAULT_MODEL")
+    gen_default_lang: Literal["fr", "en"] = Field(default="fr", env="GEN_DEFAULT_LANG")
+
+    # TTS (centralisé) pour 'other' (dialogué)
+    # Présentateur Nestr (homme) = speaker_1
+    tts_model_other: str = Field(default="gpt-4o-mini-tts", env="TTS_MODEL_OTHER")
+    tts_voice_other_speaker_1: str = Field(default="alloy", env="TTS_VOICE_OTHER_SPK1")
+    # Chroniqueuse (femme) = speaker_2
+    tts_voice_other_speaker_2: str = Field(default="onyx", env="TTS_VOICE_OTHER_SPK2")
+
+    # Noms des prompts TTS dans prompts_tts.json
+    tts_prompt_other_speaker_1: str = Field(default="other_tts_speaker_1", env="TTS_PROMPT_OTHER_SPK1")
+    tts_prompt_other_speaker_2: str = Field(default="other_tts_speaker_2", env="TTS_PROMPT_OTHER_SPK2")
     
     class Config:
         env_file = ".env"

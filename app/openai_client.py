@@ -174,12 +174,19 @@ Métadonnées:
             voice = voice or settings.default_tts_voice
             
             logger.info(f"🎵 TTS | {model} | {voice}")
+            logger.debug(
+                json.dumps({
+                    "action": "tts_input",
+                    "text_len": len(text or ""),
+                    "text_preview": (text or "")[:120].replace("\n", " "),
+                    "tts_prompt_present": bool(tts_prompt),
+                })
+            )
             
-            # Préparer le texte avec le prompt TTS si fourni
+            # Préparer le texte: ne pas injecter le prompt TTS dans le texte lu
             input_text = text
             if tts_prompt:
-                input_text = f"{tts_prompt}\n\n{text}"
-                logger.debug(f"TTS prompt appliqué: {tts_prompt[:50]}...")
+                logger.debug(f"TTS prompt fourni (non lu): {tts_prompt[:50]}...")
             
             response = self.client.audio.speech.create(
                 model=model,
@@ -198,6 +205,29 @@ Métadonnées:
             
         except Exception as e:
             logger.error(f"Erreur lors de la génération TTS: {e}")
+            raise
+    
+    async def chat_json(self, payload: Dict) -> Dict:
+        """Effectue un appel chat.completions et renvoie un dictionnaire JSON parsé.
+        Attendu: le modèle doit répondre par un JSON valide en content.
+        """
+        try:
+            # Forcer le format JSON si non fourni
+            payload = dict(payload)
+            if "response_format" not in payload:
+                payload["response_format"] = {"type": "json_object"}
+            # Baisser la température pour plus de conformité JSON si non spécifié
+            payload.setdefault("temperature", 0.2)
+            response = self.client.chat.completions.create(**payload)
+            content = response.choices[0].message.content.strip()
+            try:
+                data = json.loads(content)
+            except json.JSONDecodeError as e:
+                logger.error(f"Réponse non-JSON: {content[:500]}...")
+                raise ValueError(f"Réponse non-JSON d'OpenAI: {e}")
+            return data
+        except Exception as e:
+            logger.error(f"Erreur chat_json OpenAI: {e}")
             raise
     
     def _get_wellness_prompt(self) -> str:

@@ -7,6 +7,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 
 from .deps import get_openai_manager, get_supabase_manager, get_rss_generator
+from .config import settings
 from .models import GenerateRequest, GenerateResponse
 from .openai_client import OpenAIManager as OpenAIManagerType
 from .supabase_client import SupabaseManager as SupabaseManagerType
@@ -91,7 +92,7 @@ async def generate_podcast(
             
         except Exception as e:
             logger.error(f"❌ Erreur pipeline {request.intent}: {e}")
-            raise HTTPException(status_code=500, detail="Erreur lors de la génération du podcast")
+            raise HTTPException(status_code=500, detail=str(e) if settings.debug else "Erreur lors de la génération du podcast")
         
         # 4. Vérifier le résultat du pipeline
         if result["status"] != "success":
