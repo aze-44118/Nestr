@@ -66,3 +66,34 @@ class GenerateResponse(BaseModel):
 class HealthResponse(BaseModel):
     """Réponse du endpoint de santé."""
     ok: bool = True
+
+
+class TelegramUser(BaseModel):
+    """Modèle pour un utilisateur Telegram."""
+    id: int
+    is_bot: bool
+    first_name: str
+    last_name: Optional[str] = None
+    username: Optional[str] = None
+    language_code: Optional[str] = None
+
+
+class TelegramMessage(BaseModel):
+    """Modèle pour un message Telegram."""
+    message_id: int
+    from_user: TelegramUser = Field(..., alias="from")
+    chat: Dict[str, Any]
+    date: int
+    text: Optional[str] = None
+
+
+class TelegramUpdate(BaseModel):
+    """Modèle pour une mise à jour Telegram."""
+    update_id: int
+    message: Optional[TelegramMessage] = None
+
+
+class TelegramWebhookRequest(BaseModel):
+    """Requête webhook Telegram."""
+    update_id: int
+    message: Optional[TelegramMessage] = None

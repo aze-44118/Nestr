@@ -65,6 +65,10 @@ class Settings(BaseSettings):
     tts_prompt_other_speaker_1: str = Field(default="other_tts_speaker_1", env="TTS_PROMPT_OTHER_SPK1")
     tts_prompt_other_speaker_2: str = Field(default="other_tts_speaker_2", env="TTS_PROMPT_OTHER_SPK2")
     
+    # Telegram
+    telegram_token: str = Field(..., env="TELEGRAM_TOKEN")
+    telegram_service_id: str = Field(..., env="TELEGRAM_SERVICE_ID")
+    
     class Config:
         env_file = ".env"
         case_sensitive = False

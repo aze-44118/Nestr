@@ -22,9 +22,9 @@ RÈGLES:
 - "category" (en français), choisis ceux pertinent parmis: induction, respiration, compte, metaphore, module_prioritaire, if-then, autosuggestion, silence, futurisation, ancrage, sortie ou micro-entretien.
 - "text" = langue demandée ou langue du message. Style simple, phrases courtes, ton permissif.
 - "pause_after_sec" = entier. Pas de string, pas de virgules finales.
-- Durée visée: 2 min maximum. Alterner guidage et "silence".
-- Inclure 1–2 blocs "if-then" concrets; respiration 2–3; ancrage (pouce–index) et futurisation (demain/2 sem/1 an) si pertinent.
-- 8 à 12 entrées environ pour respecter la durée de 2 minutes.
+- Durée visée: 10 min si non précisée. Alterner guidage et "silence".
+- Inclure 2–4 blocs "if-then" concrets; respiration 4–6; ancrage (pouce–index) et futurisation (demain/2 sem/1 an) si pertinent.
+- 25 à 35 entrées environ.
 
 TRAITE le message utilisateur et PRODUIS MAINTENANT UNIQUEMENT L'OBJET JSON FINAL CONFORME.
 
