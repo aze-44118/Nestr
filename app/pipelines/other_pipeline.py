@@ -102,7 +102,7 @@ class OtherPipeline(BasePipeline):
 
                 # Fallback robuste si la voix spécifiée n'est pas supportée
                 try:
-                    audio_bytes = self.openai.tts_to_bytes(
+                    audio_bytes = await self.openai.tts_to_bytes(
                         text=text,
                         model=app_settings.tts_model_other,
                         voice=voice,
@@ -110,7 +110,7 @@ class OtherPipeline(BasePipeline):
                     )
                 except Exception:
                     # Réessayer avec la voix par défaut
-                    audio_bytes = self.openai.tts_to_bytes(
+                    audio_bytes = await self.openai.tts_to_bytes(
                         text=text,
                         model=app_settings.tts_model_other,
                         voice=app_settings.default_tts_voice,

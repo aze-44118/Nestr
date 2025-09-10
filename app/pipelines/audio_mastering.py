@@ -111,18 +111,22 @@ class AudioMastering:
     
     def _apply_eq(self, audio: AudioSegment) -> AudioSegment:
         """Applique l'égalisation 'son micro'."""
-        # High-pass 70-90 Hz (approximation avec pydub)
-        # pydub ne fait pas d'EQ précis, on utilise des filtres basiques
-        
-        # Filtre passe-haut approximatif (suppression des graves)
-        # On réduit les basses fréquences
-        filtered = audio.high_pass_filter(80)
-        
-        # Boost des médiums (2.5-3.5 kHz) - approximation
-        # On applique un léger boost dans les hautes fréquences
-        boosted = filtered + 1  # +1 dB approximatif
-        
-        return boosted
+        try:
+            # High-pass 70-90 Hz (approximation avec pydub)
+            # pydub ne fait pas d'EQ précis, on utilise des filtres basiques
+            
+            # Filtre passe-haut approximatif (suppression des graves)
+            # On réduit les basses fréquences
+            filtered = audio.high_pass_filter(80)
+            
+            # Boost des médiums (2.5-3.5 kHz) - approximation
+            # On applique un léger boost dans les hautes fréquences
+            boosted = filtered + 1  # +1 dB approximatif
+            
+            return boosted
+        except Exception as e:
+            logger.warning(f"EQ échoué, retour audio original: {e}")
+            return audio
     
     def _apply_compression(self, audio: AudioSegment) -> AudioSegment:
         """Applique la compression dynamique broadcast."""
@@ -142,16 +146,20 @@ class AudioMastering:
     
     def _apply_filters(self, audio: AudioSegment) -> AudioSegment:
         """Applique les filtres de post-traitement."""
-        # De-esser approximatif (réduction 5-8 kHz)
-        # On applique un léger filtre passe-bas
-        filtered = audio.low_pass_filter(8000)
-        
-        # Anti-pop (filtre très léger)
-        # On applique un fade très court au début
-        if len(audio) > 50:
-            filtered = filtered.fade_in(5)
-        
-        return filtered
+        try:
+            # De-esser approximatif (réduction 5-8 kHz)
+            # On applique un léger filtre passe-bas
+            filtered = audio.low_pass_filter(8000)
+            
+            # Anti-pop (filtre très léger)
+            # On applique un fade très court au début
+            if len(audio) > 50:
+                filtered = filtered.fade_in(5)
+            
+            return filtered
+        except Exception as e:
+            logger.warning(f"Filtres échoués, retour audio original: {e}")
+            return audio
     
     def _final_normalization(self, audio: AudioSegment) -> AudioSegment:
         """Normalisation finale et limiting."""
