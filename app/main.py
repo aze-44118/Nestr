@@ -193,18 +193,22 @@ async def root():
             "health": "/healthz",
             "docs": "/docs" if settings.debug else "disabled",
             "webhooks": "/webhooks/generate",
-            "telegram": "/telegram/webhook"
+            "telegram": "/telegram/webhook" if settings.telegram_token and settings.telegram_service_id else "disabled"
         }
     }
 
 
-# Telegram webhook endpoint
-@app.post("/telegram/webhook", tags=["telegram"])
+# Telegram webhook endpoint (actif seulement si les variables sont présentes)
+@app.post("/telegram/webhook", tags=["telegram"]) 
 async def telegram_webhook(update: TelegramWebhookRequest):
     """Endpoint webhook pour recevoir les messages Telegram."""
     logger = logging.getLogger("nester")
     
     try:
+        # Vérifier configuration Telegram
+        if not settings.telegram_token or not settings.telegram_service_id:
+            logger.warning("Webhook Telegram appelé mais configuration manquante. Ignoré.")
+            return {"ok": True}
         # Vérifier si c'est un message valide
         if not update.message or not update.message.text:
             return {"ok": True}
@@ -246,6 +250,10 @@ async def telegram_webhook(update: TelegramWebhookRequest):
 async def send_telegram_message(chat_id: int, text: str):
     """Envoie un message via l'API Telegram."""
     try:
+        # Si pas de config Telegram, ne rien faire
+        if not settings.telegram_token:
+            logging.getLogger("nester").warning("send_telegram_message appelé sans TELEGRAM_TOKEN. Ignoré.")
+            return
         url = f"https://api.telegram.org/bot{settings.telegram_token}/sendMessage"
         data = {
             "chat_id": chat_id,
