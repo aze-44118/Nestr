@@ -22,17 +22,10 @@ help: ## Affiche cette aide
 setup: ## Installe les dépendances et configure l'environnement
 	@echo "$(GREEN)🔧 Configuration de l'environnement...$(NC)"
 	@echo "$(YELLOW)⚠️  Python 3.13 venv bug détecté, utilisation de virtualenv...$(NC)"
-	@if command -v virtualenv >/dev/null 2>&1; then \
-		echo "$(YELLOW)📦 Installation avec virtualenv...$(NC)"; \
-		virtualenv $(VENV); \
-	elif command -v python3 -m virtualenv >/dev/null 2>&1; then \
-		echo "$(YELLOW)📦 Installation avec python3 -m virtualenv...$(NC)"; \
-		python3 -m virtualenv $(VENV); \
-	else \
-		echo "$(YELLOW)📦 Installation de virtualenv...$(NC)"; \
-		pip3 install --user virtualenv; \
-		python3 -m virtualenv $(VENV); \
-	fi
+	@echo "$(YELLOW)📦 Installation de virtualenv...$(NC)"
+	pip3 install --user virtualenv
+	@echo "$(YELLOW)📦 Création de l'environnement virtuel...$(NC)"
+	python3 -m virtualenv $(VENV)
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 	@echo "$(GREEN)✅ Installation terminée$(NC)"
