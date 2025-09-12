@@ -188,17 +188,21 @@ class AudioMastering:
         return normalized
     
     def _export_wav(self, audio: AudioSegment) -> bytes:
-        """Export WAV haute qualité pour mastering."""
+        """Export WAV optimisé pour mastering (22kHz pour réduire la taille)."""
         # Conversion en mono si nécessaire
         if audio.channels > 1:
             audio = audio.set_channels(1)
         
-        # Export WAV 44.1kHz 16-bit mono
+        # Réduire la fréquence d'échantillonnage pour réduire la taille
+        # 22kHz est suffisant pour la parole et réduit la taille de moitié
+        audio = audio.set_frame_rate(22050)
+        
+        # Export WAV 22kHz 16-bit mono (plus petit que 44.1kHz)
         buffer = io.BytesIO()
         audio.export(
             buffer,
             format="wav",
-            parameters=["-acodec", "pcm_s16le", "-ar", "44100", "-ac", "1"]
+            parameters=["-acodec", "pcm_s16le", "-ar", "22050", "-ac", "1"]
         )
         return buffer.getvalue()
     
@@ -222,21 +226,22 @@ class AudioMastering:
                 "-i", "pipe:0",
                 "-vn",  # Pas de vidéo
                 "-acodec", "libmp3lame",
-                "-b:a", "128k",  # Bitrate 128k pour qualité podcast
-                "-ar", "44100",  # Sample rate 44.1kHz
+                "-b:a", "96k",   # Bitrate 96k pour podcast (suffisant pour 22kHz)
+                "-ar", "22050",  # Sample rate 22kHz (correspond au WAV)
                 "-ac", "1",      # Mono
                 "-q:a", "2",     # Qualité VBR
                 "-f", "mp3",
                 "pipe:1"
             ]
             
-            # Exécuter ffmpeg
+            # Exécuter ffmpeg avec timeout pour éviter les blocages
             proc = subprocess.run(
                 cmd,
                 input=wav_bytes,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                check=True
+                check=True,
+                timeout=30  # Timeout de 30 secondes
             )
             
             if proc.stdout:
@@ -246,6 +251,9 @@ class AudioMastering:
                 logger.warning("ffmpeg n'a produit aucune sortie")
                 return None
                 
+        except subprocess.TimeoutExpired as e:
+            logger.error(f"Timeout ffmpeg (30s): {e}")
+            return None
         except subprocess.CalledProcessError as e:
             logger.error(f"Erreur ffmpeg: {e.stderr.decode() if e.stderr else 'Unknown error'}")
             return None

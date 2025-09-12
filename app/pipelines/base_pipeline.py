@@ -129,9 +129,10 @@ class BasePipeline(ABC):
                     return duration_sec
                 except:
                     # Fallback: estimation basique
-                    # WAV: 44.1kHz * 2 bytes * 1 channel = 88200 bytes/sec
+                    # WAV 22kHz: 22050 * 2 bytes * 1 channel = 44100 bytes/sec
+                    # WAV 44.1kHz: 44100 * 2 bytes * 1 channel = 88200 bytes/sec
                     # MP3: estimation ~16KB/sec
-                    estimated_duration = len(audio_bytes) // 88200  # WAV estimation
+                    estimated_duration = len(audio_bytes) // 44100  # WAV 22kHz estimation
                     if estimated_duration < 1:
                         estimated_duration = len(audio_bytes) // 16000  # MP3 estimation
                     logger.warning(f"Estimation durée audio: {estimated_duration}s")
