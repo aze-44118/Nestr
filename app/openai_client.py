@@ -194,8 +194,8 @@ Métadonnées:
                 input=input_text
             )
             
-            # Sauvegarder temporairement
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".mp3") as temp_file:
+            # Sauvegarder temporairement en WAV pour meilleure qualité
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
                 response.stream_to_file(temp_file.name)
                 temp_file.seek(0)
                 audio_bytes = temp_file.read()

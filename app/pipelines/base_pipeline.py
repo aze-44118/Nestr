@@ -106,24 +106,41 @@ class BasePipeline(ABC):
             raise
     
     def _calculate_audio_duration(self, audio_bytes: bytes) -> int:
-        """Calcule la durée réelle d'un fichier audio MP3."""
+        """Calcule la durée réelle d'un fichier audio (MP3 ou WAV)."""
         try:
             from mutagen.mp3 import MP3
+            from mutagen.wave import WAVE
             import io
             
-            # Créer un objet MP3 à partir des bytes
-            audio_file = io.BytesIO(audio_bytes)
-            mp3 = MP3(audio_file)
-            
-            # Retourner la durée en secondes
-            duration_sec = int(mp3.info.length)
-            logger.info(f"Durée audio calculée: {duration_sec}s")
-            return duration_sec
+            # Essayer MP3 d'abord
+            try:
+                audio_file = io.BytesIO(audio_bytes)
+                mp3 = MP3(audio_file)
+                duration_sec = int(mp3.info.length)
+                logger.info(f"Durée audio MP3 calculée: {duration_sec}s")
+                return duration_sec
+            except:
+                # Essayer WAV
+                try:
+                    audio_file = io.BytesIO(audio_bytes)
+                    wav = WAVE(audio_file)
+                    duration_sec = int(wav.info.length)
+                    logger.info(f"Durée audio WAV calculée: {duration_sec}s")
+                    return duration_sec
+                except:
+                    # Fallback: estimation basique
+                    # WAV: 44.1kHz * 2 bytes * 1 channel = 88200 bytes/sec
+                    # MP3: estimation ~16KB/sec
+                    estimated_duration = len(audio_bytes) // 88200  # WAV estimation
+                    if estimated_duration < 1:
+                        estimated_duration = len(audio_bytes) // 16000  # MP3 estimation
+                    logger.warning(f"Estimation durée audio: {estimated_duration}s")
+                    return max(1, estimated_duration)
             
         except Exception as e:
             logger.warning(f"Impossible de calculer la durée audio: {e}")
             # Estimation basique : 1 seconde pour 16KB
-            return len(audio_bytes) // 16000
+            return max(1, len(audio_bytes) // 16000)
     
     async def _regenerate_rss(self, user_id: str) -> str:
         """Régénère le flux RSS pour l'utilisateur."""

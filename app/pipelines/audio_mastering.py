@@ -63,10 +63,18 @@ class AudioMastering:
             final_audio = self._final_normalization(filtered)
             logger.debug("🎛️ Normalisation finale terminée")
             
-            # 7. Export MP3 optimisé
-            result = self._export_mp3(final_audio)
-            logger.info(f"🎛️ Mastering terminé: {len(result)} bytes")
-            return result
+            # 7. Export WAV final (haute qualité)
+            wav_result = self._export_wav(final_audio)
+            logger.info(f"🎛️ Mastering WAV terminé: {len(wav_result)} bytes")
+            
+            # 8. Conversion finale en MP3 avec ffmpeg
+            mp3_result = self._convert_to_mp3_ffmpeg(wav_result)
+            if mp3_result:
+                logger.info(f"🎛️ Conversion MP3 terminée: {len(mp3_result)} bytes")
+                return mp3_result
+            else:
+                logger.warning("⚠️ Conversion MP3 échouée, retour du WAV")
+                return wav_result
             
         except Exception as e:
             logger.error(f"Erreur mastering audio: {e}")
@@ -74,12 +82,17 @@ class AudioMastering:
             return self._fallback_concat(segments)
     
     def _load_audio_segment(self, audio_bytes: bytes) -> AudioSegment:
-        """Charge un segment audio depuis des bytes MP3."""
+        """Charge un segment audio depuis des bytes WAV."""
         try:
-            return AudioSegment.from_mp3(io.BytesIO(audio_bytes))
+            return AudioSegment.from_wav(io.BytesIO(audio_bytes))
         except Exception as e:
-            logger.warning(f"Impossible de charger segment audio: {e}")
-            return None
+            logger.warning(f"Impossible de charger segment audio WAV: {e}")
+            # Fallback: essayer MP3 si WAV échoue
+            try:
+                return AudioSegment.from_mp3(io.BytesIO(audio_bytes))
+            except Exception as e2:
+                logger.warning(f"Impossible de charger segment audio MP3: {e2}")
+                return None
     
     def _normalize_segment(self, audio: AudioSegment) -> AudioSegment:
         """Normalise un segment vers la cible LUFS."""
@@ -174,8 +187,74 @@ class AudioMastering:
         
         return normalized
     
+    def _export_wav(self, audio: AudioSegment) -> bytes:
+        """Export WAV haute qualité pour mastering."""
+        # Conversion en mono si nécessaire
+        if audio.channels > 1:
+            audio = audio.set_channels(1)
+        
+        # Export WAV 44.1kHz 16-bit mono
+        buffer = io.BytesIO()
+        audio.export(
+            buffer,
+            format="wav",
+            parameters=["-acodec", "pcm_s16le", "-ar", "44100", "-ac", "1"]
+        )
+        return buffer.getvalue()
+    
+    def _convert_to_mp3_ffmpeg(self, wav_bytes: bytes) -> bytes:
+        """Convertit WAV en MP3 avec ffmpeg pour qualité optimale."""
+        import shutil
+        import subprocess
+        
+        try:
+            # Vérifier que ffmpeg est disponible
+            ffmpeg_path = shutil.which("ffmpeg")
+            if not ffmpeg_path:
+                logger.warning("ffmpeg non trouvé, conversion MP3 impossible")
+                return None
+            
+            # Commande ffmpeg pour conversion WAV -> MP3 optimisée podcast
+            cmd = [
+                ffmpeg_path,
+                "-hide_banner", "-loglevel", "error",
+                "-f", "wav",
+                "-i", "pipe:0",
+                "-vn",  # Pas de vidéo
+                "-acodec", "libmp3lame",
+                "-b:a", "128k",  # Bitrate 128k pour qualité podcast
+                "-ar", "44100",  # Sample rate 44.1kHz
+                "-ac", "1",      # Mono
+                "-q:a", "2",     # Qualité VBR
+                "-f", "mp3",
+                "pipe:1"
+            ]
+            
+            # Exécuter ffmpeg
+            proc = subprocess.run(
+                cmd,
+                input=wav_bytes,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                check=True
+            )
+            
+            if proc.stdout:
+                logger.info(f"✅ Conversion ffmpeg WAV->MP3: {len(wav_bytes)} -> {len(proc.stdout)} bytes")
+                return proc.stdout
+            else:
+                logger.warning("ffmpeg n'a produit aucune sortie")
+                return None
+                
+        except subprocess.CalledProcessError as e:
+            logger.error(f"Erreur ffmpeg: {e.stderr.decode() if e.stderr else 'Unknown error'}")
+            return None
+        except Exception as e:
+            logger.error(f"Erreur conversion MP3: {e}")
+            return None
+    
     def _export_mp3(self, audio: AudioSegment) -> bytes:
-        """Export MP3 optimisé pour podcast."""
+        """Export MP3 de fallback avec pydub."""
         # Conversion en mono si nécessaire
         if audio.channels > 1:
             audio = audio.set_channels(1)
@@ -193,6 +272,42 @@ class AudioMastering:
     def _fallback_concat(self, segments: List[Dict[str, Any]]) -> bytes:
         """Fallback: concaténation simple sans mastering."""
         logger.warning("Utilisation du fallback de concaténation simple")
+        
+        # Essayer de charger les segments avec pydub pour une meilleure concaténation
+        try:
+            from pydub import AudioSegment
+            audio_segments = []
+            
+            for seg in segments:
+                if seg.get("audio"):
+                    try:
+                        # Essayer WAV d'abord
+                        audio_seg = AudioSegment.from_wav(io.BytesIO(seg["audio"]))
+                        audio_segments.append(audio_seg)
+                    except:
+                        try:
+                            # Fallback MP3
+                            audio_seg = AudioSegment.from_mp3(io.BytesIO(seg["audio"]))
+                            audio_segments.append(audio_seg)
+                        except:
+                            logger.warning("Impossible de charger un segment audio")
+                            continue
+            
+            if audio_segments:
+                # Concaténer avec pydub
+                combined = audio_segments[0]
+                for seg in audio_segments[1:]:
+                    combined += seg
+                
+                # Exporter en WAV
+                buffer = io.BytesIO()
+                combined.export(buffer, format="wav")
+                return buffer.getvalue()
+        
+        except Exception as e:
+            logger.warning(f"Fallback pydub échoué: {e}")
+        
+        # Dernier recours: concaténation brute
         combined = bytearray()
         for seg in segments:
             if seg.get("audio"):
