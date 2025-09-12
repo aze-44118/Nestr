@@ -21,7 +21,14 @@ help: ## Affiche cette aide
 
 setup: ## Installe les dépendances et configure l'environnement
 	@echo "$(GREEN)🔧 Configuration de l'environnement...$(NC)"
-	$(PYTHON) -m venv $(VENV)
+	$(PYTHON) -m venv $(VENV) --without-pip
+	@echo "$(YELLOW)📦 Installation de pip...$(NC)"
+	@if command -v curl >/dev/null 2>&1; then \
+		curl -s https://bootstrap.pypa.io/get-pip.py | $(PYTHON_VENV); \
+	else \
+		echo "$(YELLOW)⚠️  curl non disponible, tentative avec wget...$(NC)"; \
+		wget -qO- https://bootstrap.pypa.io/get-pip.py | $(PYTHON_VENV); \
+	fi
 	$(PIP) install --upgrade pip
 	$(PIP) install -r requirements.txt
 	@echo "$(GREEN)✅ Installation terminée$(NC)"
