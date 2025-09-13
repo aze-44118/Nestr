@@ -222,11 +222,8 @@ async def telegram_webhook(update: TelegramWebhookRequest):
         
         # Vérifier l'authentification
         if user_id != settings.telegram_service_id:
-            logger.warning(f"🚫 Accès refusé pour l'utilisateur Telegram {user_id}")
-            try:
-                await send_telegram_message(chat_id, "Désolé, c'est une soirée privée et vous n'êtes pas sur la liste")
-            except Exception as e:
-                logger.warning(f"Impossible d'envoyer le message de refus: {e}")
+            logger.warning(f"🚫 Utilisateur non autorisé {user_id}, démarrage de l'onboarding")
+            await handle_unauthorized_user(chat_id, user_id, message_text)
             return {"ok": True}
         
         # L'utilisateur est autorisé, traiter les commandes
@@ -245,6 +242,94 @@ async def telegram_webhook(update: TelegramWebhookRequest):
     except Exception as e:
         logger.error(f"❌ Erreur dans le webhook Telegram: {str(e)}")
         return {"ok": False, "error": str(e)}
+
+
+async def handle_unauthorized_user(chat_id: int, user_id: str, message_text: str):
+    """Gère l'onboarding pour les utilisateurs non autorisés."""
+    logger = logging.getLogger("nester")
+    
+    try:
+        # Vérifier si c'est un code d'onboarding
+        if message_text.isdigit():
+            # C'est un code numérique, vérifier s'il existe dans la table users
+            if await validate_onboarding_code(message_text):
+                # Code valide, envoyer le message d'onboarding
+                await send_onboarding_message(chat_id)
+                logger.info(f"✅ Code d'onboarding valide pour {user_id}: {message_text}")
+            else:
+                # Code invalide
+                await send_telegram_message(chat_id, "❌ Code invalide. Veuillez entrer un code valide ou contacter l'administrateur.")
+                logger.warning(f"❌ Code d'onboarding invalide de {user_id}: {message_text}")
+        else:
+            # Premier message, demander le code
+            await send_telegram_message(chat_id, 
+                "🔐 <b>Bienvenue sur Nestr!</b>\n\n"
+                "Pour accéder au bot, veuillez entrer votre code d'accès.\n\n"
+                "Ce code correspond à votre ID dans notre système.\n\n"
+                "💡 <i>Entrez simplement votre code numérique</i>"
+            )
+            logger.info(f"📝 Demande de code d'onboarding pour {user_id}")
+            
+    except Exception as e:
+        logger.error(f"❌ Erreur lors de l'onboarding pour {user_id}: {str(e)}")
+        await send_telegram_message(chat_id, "❌ Une erreur s'est produite. Veuillez réessayer.")
+
+
+async def validate_onboarding_code(code: str) -> bool:
+    """Valide un code d'onboarding contre la table users de Supabase."""
+    logger = logging.getLogger("nester")
+    
+    try:
+        # Obtenir le gestionnaire Supabase
+        supabase_manager = get_supabase_manager()
+        
+        if supabase_manager.test_mode:
+            # En mode test, accepter n'importe quel code numérique
+            logger.info(f"Mode test - Code accepté: {code}")
+            return True
+        
+        # Vérifier si le code existe dans la table users
+        result = supabase_manager.client.table("users").select("id").eq("id", code).execute()
+        
+        if result.data and len(result.data) > 0:
+            logger.info(f"✅ Code d'onboarding valide trouvé: {code}")
+            return True
+        else:
+            logger.warning(f"❌ Code d'onboarding non trouvé: {code}")
+            return False
+            
+    except Exception as e:
+        logger.error(f"❌ Erreur lors de la validation du code {code}: {str(e)}")
+        return False
+
+
+async def send_onboarding_message(chat_id: int):
+    """Envoie le message d'onboarding avec les commandes disponibles."""
+    onboarding_text = """🎉 <b>Bienvenue sur Nestr!</b>
+
+<b>Qu'est-ce que Nestr?</b>
+Nestr est votre assistant personnel pour créer des podcasts personnalisés. Je peux générer des épisodes audio sur n'importe quel sujet que vous souhaitez.
+
+<b>Commandes disponibles:</b>
+• <code>/wellness [sujet]</code> - Podcast sur le bien-être et la santé
+• <code>/briefing [sujet]</code> - Podcast d'actualités et d'information  
+• <code>/other [sujet]</code> - Podcast de dialogue et discussion
+• <code>/help</code> - Afficher cette aide
+
+<b>Exemples d'utilisation:</b>
+• <code>/wellness Créez un podcast sur la méditation matinale</code>
+• <code>/briefing Résumez les actualités tech de cette semaine</code>
+• <code>/other Discutez des tendances IA en 2024</code>
+
+<b>Comment ça marche?</b>
+1. Choisissez un type de podcast
+2. Décrivez votre sujet
+3. Je génère un épisode audio personnalisé
+4. L'épisode est ajouté à votre flux RSS personnel
+
+🚀 <i>Prêt à créer votre premier podcast?</i>"""
+
+    await send_telegram_message(chat_id, onboarding_text)
 
 
 async def send_telegram_message(chat_id: int, text: str):
