@@ -210,7 +210,13 @@ async def telegram_webhook(update: TelegramWebhookRequest):
             logger.warning("Webhook Telegram appelé mais configuration manquante. Ignoré.")
             return {"ok": True}
         # Vérifier si c'est un message valide
-        if not update.message or not update.message.text:
+        if not update.message:
+            logger.warning("Message Telegram invalide: pas de message")
+            return {"ok": True}
+        
+        # Gérer les messages sans texte (stickers, photos, etc.)
+        if not update.message.text:
+            logger.info(f"Message non-texte reçu de {update.message.from_user.id}, ignoré")
             return {"ok": True}
         
         # Récupérer l'ID de l'utilisateur Telegram
@@ -218,7 +224,8 @@ async def telegram_webhook(update: TelegramWebhookRequest):
         message_text = update.message.text.strip()
         chat_id = update.message.chat.get("id")
         
-        logger.info(f"📱 Message Telegram reçu de {user_id}: {message_text}")
+        logger.info(f"📱 Message Telegram reçu de {user_id} (chat: {chat_id}): {message_text}")
+        logger.info(f"🔧 Configuration: token={'***' if settings.telegram_token else 'MANQUANT'}, service_id={settings.telegram_service_id}")
         
         # Vérifier l'authentification
         if user_id != settings.telegram_service_id:
@@ -356,7 +363,8 @@ async def send_telegram_message(chat_id: int, text: str):
     except Exception as e:
         logger = logging.getLogger("nester")
         logger.error(f"❌ Erreur envoi message Telegram: {str(e)}")
-        raise
+        # Ne pas faire planter le webhook, juste logger l'erreur
+        return
 
 
 async def handle_telegram_command(chat_id: int, command: str, user_id: str):
