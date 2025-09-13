@@ -3,12 +3,28 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nester-noesis"
-version = "0.1.0"
-description = "Service FastAPI pour Nestr - génération de podcasts avec OpenAI et Supabase"
-authors = [{name = "Nestr Team"}]
+name = "nestr"
+version = "1.0.0"
+description = "AI-powered podcast generation platform with OpenAI and Supabase"
+authors = [{name = "Nestr Team", email = "team@nestr.app"}]
 readme = "README.md"
-requires-python = ">=3.11"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+keywords = ["podcast", "ai", "openai", "tts", "fastapi", "supabase"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+]
 dependencies = [
     "fastapi>=0.104.0",
     "uvicorn[standard]>=0.24.0",

@@ -1,3 +1,9 @@
+# Environment variables
+.env
+.env.local
+.env.production
+.env.staging
+
 # Python
 __pycache__/
 *.py[cod]
@@ -16,22 +22,20 @@ parts/
 sdist/
 var/
 wheels/
+share/python-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 MANIFEST
 
-# Virtual Environment
+# Virtual environments
 venv/
+venv_new/
 env/
 ENV/
 env.bak/
 venv.bak/
-
-# Environment variables
-.env
-.env.local
-.env.production
+.venv/
 
 # IDE
 .vscode/
@@ -53,11 +57,27 @@ Thumbs.db
 *.log
 logs/
 
+# Database
+*.db
+*.sqlite3
+
+# Audio files (temporary)
+*.wav
+*.mp3
+*.m4a
+*.aac
+*.ogg
+*.flac
+
+# Test files
+test_*.py
+*_test.py
+tests/
+
 # Temporary files
-*.tmp
-*.temp
-temp/
 tmp/
+temp/
+*.tmp
 
 # Coverage reports
 htmlcov/
@@ -104,4 +124,18 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
-theta_wave.mp3
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# PyCharm
+.idea/
+
+# Project specific
+payload.json
+rss.xml
+theta_wave.wav
+untitled folder/

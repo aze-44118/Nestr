@@ -1,4 +1,4 @@
-"""Application principale FastAPI pour Nestr."""
+"""Main FastAPI application for Nestr - AI-powered podcast generation platform."""
 import json
 import logging
 import sys
@@ -8,7 +8,6 @@ from fastapi import FastAPI, Request, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import httpx
-import logging
 
 from .config import settings
 from .models import HealthResponse, TelegramWebhookRequest
@@ -18,9 +17,9 @@ from .pipeline_manager import PipelineManager
 from .utils import default_metadata_for_generation
 
 
-# Configuration du logging avec couleurs et formats
+# Logging configuration with colors and formats
 class ColoredFormatter(logging.Formatter):
-    """Formateur de logs avec couleurs pour le terminal."""
+    """Colored log formatter for terminal output."""
     
     def __init__(self, use_colors=True, format=None, datefmt=None):
         super().__init__(format, datefmt)
@@ -29,13 +28,13 @@ class ColoredFormatter(logging.Formatter):
     def format(self, record):
         from .config import LOG_COLORS
         
-        # Couleur selon le niveau
+        # Color based on log level
         if self.use_colors and record.levelname in LOG_COLORS:
             color = LOG_COLORS[record.levelname]
             reset = LOG_COLORS["RESET"]
             record.levelname = f"{color}{record.levelname}{reset}"
         
-        # Format selon le type
+        # Format based on log type
         if hasattr(record, 'log_type'):
             if record.log_type == "request":
                 return self._format_request(record)
@@ -44,23 +43,24 @@ class ColoredFormatter(logging.Formatter):
             elif record.log_type == "podcast":
                 return self._format_podcast(record)
         
-        # Format par défaut
+        # Default format
         return super().format(record)
     
     def _format_request(self, record):
-        """Format spécial pour les requêtes HTTP."""
+        """Special format for HTTP requests."""
         return f"[{record.asctime}] {record.levelname} | HTTP {record.method} {record.url} | {record.status_code} | {record.duration_ms}ms"
     
     def _format_pipeline(self, record):
-        """Format spécial pour les pipelines."""
+        """Special format for pipeline logs."""
         return f"[{record.asctime}] {record.levelname} | PIPELINE {record.intent} | {record.message} | {record.duration_ms}ms"
     
     def _format_podcast(self, record):
-        """Format spécial pour la génération de podcasts."""
+        """Special format for podcast generation logs."""
         return f"[{record.asctime}] {record.levelname} | PODCAST {record.intent} | User: {record.user_id} | {record.message} | {record.duration_ms}ms"
 
+
 class JSONFormatter(logging.Formatter):
-    """Formateur de logs au format JSON pour la production."""
+    """JSON log formatter for production."""
     
     def format(self, record):
         log_entry = {
@@ -70,7 +70,7 @@ class JSONFormatter(logging.Formatter):
             "message": record.getMessage(),
         }
         
-        # Ajouter les champs extra s'ils existent
+        # Add extra fields if they exist
         if hasattr(record, "user_id"):
             log_entry["user_id"] = record.user_id
         if hasattr(record, "intent"):
@@ -84,7 +84,7 @@ class JSONFormatter(logging.Formatter):
         if hasattr(record, "status_code"):
             log_entry["status_code"] = record.status_code
         
-        # Ajouter l'exception si présente
+        # Add exception if present
         if record.exc_info:
             log_entry["exception"] = self.formatException(record.exc_info)
         
@@ -92,81 +92,81 @@ class JSONFormatter(logging.Formatter):
 
 
 def setup_logging():
-    """Configure le système de logging de manière simple."""
-    # Configuration basique du logging
+    """Configure the logging system in a simple way."""
+    # Basic logging configuration
     log_level = getattr(logging, settings.log_level.upper(), logging.INFO)
     
-    # Configuration simple et claire
+    # Simple and clear configuration
     logging.basicConfig(
         level=log_level,
         format="%(asctime)s | %(levelname)s | %(message)s",
         datefmt="%H:%M:%S",
-        force=True  # Force la reconfiguration
+        force=True  # Force reconfiguration
     )
     
-    # Logger principal
+    # Main logger
     logger = logging.getLogger("nester")
     
     if settings.debug:
-        logger.info("🐛 Mode DEBUG activé")
+        logger.info("🐛 DEBUG mode enabled")
     else:
-        logger.info("🚀 Mode PRODUCTION")
+        logger.info("🚀 PRODUCTION mode")
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Gestionnaire de cycle de vie de l'application."""
-    # Démarrage
+    """Application lifecycle manager."""
+    # Startup
     setup_logging()
-    logging.info("Application Nestr Noesis démarrée")
+    logging.info("Nestr application started")
     
     yield
     
-    # Arrêt
-    logging.info("Application Nestr Noesis arrêtée")
+    # Shutdown
+    logging.info("Nestr application stopped")
 
 
-# Création de l'application FastAPI
+# Create FastAPI application
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="API de génération de podcasts Nestr avec OpenAI et Supabase",
+    description="Nestr API for AI-powered podcast generation with OpenAI and Supabase",
     docs_url="/docs" if settings.debug else None,
     redoc_url="/redoc" if settings.debug else None,
     lifespan=lifespan
 )
 
-# Configuration CORS
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # MVP: autoriser toutes les origines
+    allow_origins=["*"],  # MVP: allow all origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-    # Middleware de logging des requêtes
+# Request logging middleware
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
-    """Middleware pour logger toutes les requêtes HTTP."""
+    """Middleware to log all HTTP requests."""
     import time
     start_time = time.time()
     
-    # Logger principal
+    # Main logger
     logger = logging.getLogger("nester")
     
-    # Log de la requête entrante (simplifié)
+    # Log incoming request (simplified)
     if request.url.path != "/healthz":
         logger.info(f"🌐 {request.method} {request.url.path}")
     
-    # Traitement de la requête
+    # Process request
     response = await call_next(request)
     
-    # Calcul du temps de traitement
+    # Calculate processing time
     process_time = time.time() - start_time
     duration_ms = round(process_time * 1000, 2)
     
-    # Log de la réponse (seulement si pas de santé)
+    # Log response (only if not health check)
     if request.url.path != "/healthz":
         status_emoji = "✅" if response.status_code < 400 else "❌"
         logger.info(f"{status_emoji} {request.method} {request.url.path} | {response.status_code} | {duration_ms}ms")
@@ -174,17 +174,17 @@ async def log_requests(request: Request, call_next):
     return response
 
 
-# Endpoint de santé
+# Health check endpoint
 @app.get("/healthz", response_model=HealthResponse, tags=["health"])
 async def health_check():
-    """Endpoint de vérification de santé de l'application."""
+    """Application health check endpoint."""
     return HealthResponse(ok=True)
 
 
-# Endpoint racine
+# Root endpoint
 @app.get("/", tags=["root"])
 async def root():
-    """Endpoint racine avec informations sur l'API."""
+    """Root endpoint with API information."""
     return {
         "name": settings.app_name,
         "version": settings.app_version,
@@ -198,153 +198,154 @@ async def root():
     }
 
 
-# Telegram webhook endpoint (actif seulement si les variables sont présentes)
+# Telegram webhook endpoint (active only if variables are present)
 @app.post("/telegram/webhook", tags=["telegram"]) 
 async def telegram_webhook(update: TelegramWebhookRequest):
-    """Endpoint webhook pour recevoir les messages Telegram."""
+    """Webhook endpoint for receiving Telegram messages."""
     logger = logging.getLogger("nester")
     
     try:
-        # Vérifier configuration Telegram
+        # Check Telegram configuration
         if not settings.telegram_token or not settings.telegram_service_id:
-            logger.warning("Webhook Telegram appelé mais configuration manquante. Ignoré.")
+            logger.warning("Telegram webhook called but configuration missing. Ignored.")
             return {"ok": True}
-        # Vérifier si c'est un message valide
+        
+        # Check if it's a valid message
         if not update.message:
-            logger.warning("Message Telegram invalide: pas de message")
+            logger.warning("Invalid Telegram message: no message")
             return {"ok": True}
         
-        # Gérer les messages sans texte (stickers, photos, etc.)
+        # Handle non-text messages (stickers, photos, etc.)
         if not update.message.text:
-            logger.info(f"Message non-texte reçu de {update.message.from_user.id}, ignoré")
+            logger.info(f"Non-text message received from {update.message.from_user.id}, ignored")
             return {"ok": True}
         
-        # Récupérer l'ID de l'utilisateur Telegram
+        # Get Telegram user ID
         user_id = str(update.message.from_user.id)
         message_text = update.message.text.strip()
         chat_id = update.message.chat.get("id")
         
-        logger.info(f"📱 Message Telegram reçu de {user_id} (chat: {chat_id}): {message_text}")
-        logger.info(f"🔧 Configuration: token={'***' if settings.telegram_token else 'MANQUANT'}, service_id={settings.telegram_service_id}")
+        logger.info(f"📱 Telegram message received from {user_id} (chat: {chat_id}): {message_text}")
+        logger.info(f"🔧 Configuration: token={'***' if settings.telegram_token else 'MISSING'}, service_id={settings.telegram_service_id}")
         
-        # Vérifier l'authentification
+        # Check authentication
         if user_id != settings.telegram_service_id:
-            logger.warning(f"🚫 Utilisateur non autorisé {user_id}, démarrage de l'onboarding")
+            logger.warning(f"🚫 Unauthorized user {user_id}, starting onboarding")
             await handle_unauthorized_user(chat_id, user_id, message_text)
             return {"ok": True}
         
-        # L'utilisateur est autorisé, traiter les commandes
-        logger.info(f"✅ Utilisateur autorisé {user_id}, traitement de la commande")
+        # User is authorized, process commands
+        logger.info(f"✅ Authorized user {user_id}, processing command")
         
-        # Parser les commandes
+        # Parse commands
         if message_text.startswith('/'):
-            logger.info(f"🔍 Commande détectée: {message_text}")
+            logger.info(f"🔍 Command detected: {message_text}")
             await handle_telegram_command(chat_id, message_text, user_id)
         else:
-            # Message non-commande, ignorer silencieusement
-            logger.info(f"📝 Message non-commande ignoré: {message_text}")
+            # Non-command message, ignore silently
+            logger.info(f"📝 Non-command message ignored: {message_text}")
         
         return {"ok": True}
         
     except Exception as e:
-        logger.error(f"❌ Erreur dans le webhook Telegram: {str(e)}")
+        logger.error(f"❌ Error in Telegram webhook: {str(e)}")
         return {"ok": False, "error": str(e)}
 
 
 async def handle_unauthorized_user(chat_id: int, user_id: str, message_text: str):
-    """Gère l'onboarding pour les utilisateurs non autorisés."""
+    """Handle onboarding for unauthorized users."""
     logger = logging.getLogger("nester")
     
     try:
-        # Vérifier si c'est un code d'onboarding
+        # Check if it's an onboarding code
         if message_text.isdigit():
-            # C'est un code numérique, vérifier s'il existe dans la table users
+            # It's a numeric code, check if it exists in the users table
             if await validate_onboarding_code(message_text):
-                # Code valide, envoyer le message d'onboarding
+                # Valid code, send onboarding message
                 await send_onboarding_message(chat_id)
-                logger.info(f"✅ Code d'onboarding valide pour {user_id}: {message_text}")
+                logger.info(f"✅ Valid onboarding code for {user_id}: {message_text}")
             else:
-                # Code invalide
-                await send_telegram_message(chat_id, "❌ Code invalide. Veuillez entrer un code valide ou contacter l'administrateur.")
-                logger.warning(f"❌ Code d'onboarding invalide de {user_id}: {message_text}")
+                # Invalid code
+                await send_telegram_message(chat_id, "❌ Invalid code. Please enter a valid code or contact the administrator.")
+                logger.warning(f"❌ Invalid onboarding code from {user_id}: {message_text}")
         else:
-            # Premier message, demander le code
+            # First message, ask for code
             await send_telegram_message(chat_id, 
-                "🔐 <b>Bienvenue sur Nestr!</b>\n\n"
-                "Pour accéder au bot, veuillez entrer votre code d'accès.\n\n"
-                "Ce code correspond à votre ID dans notre système.\n\n"
-                "💡 <i>Entrez simplement votre code numérique</i>"
+                "🔐 <b>Welcome to Nestr!</b>\n\n"
+                "To access the bot, please enter your access code.\n\n"
+                "This code corresponds to your ID in our system.\n\n"
+                "💡 <i>Simply enter your numeric code</i>"
             )
-            logger.info(f"📝 Demande de code d'onboarding pour {user_id}")
+            logger.info(f"📝 Onboarding code request for {user_id}")
             
     except Exception as e:
-        logger.error(f"❌ Erreur lors de l'onboarding pour {user_id}: {str(e)}")
-        await send_telegram_message(chat_id, "❌ Une erreur s'est produite. Veuillez réessayer.")
+        logger.error(f"❌ Error during onboarding for {user_id}: {str(e)}")
+        await send_telegram_message(chat_id, "❌ An error occurred. Please try again.")
 
 
 async def validate_onboarding_code(code: str) -> bool:
-    """Valide un code d'onboarding contre la table users de Supabase."""
+    """Validate an onboarding code against the Supabase users table."""
     logger = logging.getLogger("nester")
     
     try:
-        # Obtenir le gestionnaire Supabase
+        # Get Supabase manager
         supabase_manager = get_supabase_manager()
         
         if supabase_manager.test_mode:
-            # En mode test, accepter n'importe quel code numérique
-            logger.info(f"Mode test - Code accepté: {code}")
+            # In test mode, accept any numeric code
+            logger.info(f"Test mode - Code accepted: {code}")
             return True
         
-        # Vérifier si le code existe dans la table users
+        # Check if the code exists in the users table
         result = supabase_manager.client.table("users").select("id").eq("id", code).execute()
         
         if result.data and len(result.data) > 0:
-            logger.info(f"✅ Code d'onboarding valide trouvé: {code}")
+            logger.info(f"✅ Valid onboarding code found: {code}")
             return True
         else:
-            logger.warning(f"❌ Code d'onboarding non trouvé: {code}")
+            logger.warning(f"❌ Onboarding code not found: {code}")
             return False
             
     except Exception as e:
-        logger.error(f"❌ Erreur lors de la validation du code {code}: {str(e)}")
+        logger.error(f"❌ Error validating code {code}: {str(e)}")
         return False
 
 
 async def send_onboarding_message(chat_id: int):
-    """Envoie le message d'onboarding avec les commandes disponibles."""
-    onboarding_text = """🎉 <b>Bienvenue sur Nestr!</b>
+    """Send the onboarding message with available commands."""
+    onboarding_text = """🎉 <b>Welcome to Nestr!</b>
 
-<b>Qu'est-ce que Nestr?</b>
-Nestr est votre assistant personnel pour créer des podcasts personnalisés. Je peux générer des épisodes audio sur n'importe quel sujet que vous souhaitez.
+<b>What is Nestr?</b>
+Nestr is your personal assistant for creating custom podcasts. I can generate audio episodes on any topic you want.
 
-<b>Commandes disponibles:</b>
-• <code>/wellness [sujet]</code> - Podcast sur le bien-être et la santé
-• <code>/briefing [sujet]</code> - Podcast d'actualités et d'information  
-• <code>/other [sujet]</code> - Podcast de dialogue et discussion
-• <code>/help</code> - Afficher cette aide
+<b>Available commands:</b>
+• <code>/wellness [topic]</code> - Wellness and health podcast
+• <code>/briefing [topic]</code> - News and information podcast  
+• <code>/other [topic]</code> - Dialogue and discussion podcast
+• <code>/help</code> - Show this help
 
-<b>Exemples d'utilisation:</b>
-• <code>/wellness Créez un podcast sur la méditation matinale</code>
-• <code>/briefing Résumez les actualités tech de cette semaine</code>
-• <code>/other Discutez des tendances IA en 2024</code>
+<b>Usage examples:</b>
+• <code>/wellness Create a podcast about morning meditation</code>
+• <code>/briefing Summarize this week's tech news</code>
+• <code>/other Discuss AI trends in 2024</code>
 
-<b>Comment ça marche?</b>
-1. Choisissez un type de podcast
-2. Décrivez votre sujet
-3. Je génère un épisode audio personnalisé
-4. L'épisode est ajouté à votre flux RSS personnel
+<b>How it works:</b>
+1. Choose a podcast type
+2. Describe your topic
+3. I generate a personalized audio episode
+4. The episode is added to your personal RSS feed
 
-🚀 <i>Prêt à créer votre premier podcast?</i>"""
+🚀 <i>Ready to create your first podcast?</i>"""
 
     await send_telegram_message(chat_id, onboarding_text)
 
 
 async def send_telegram_message(chat_id: int, text: str):
-    """Envoie un message via l'API Telegram."""
+    """Send a message via Telegram API."""
     try:
-        # Si pas de config Telegram, ne rien faire
+        # If no Telegram config, do nothing
         if not settings.telegram_token:
-            logging.getLogger("nester").warning("send_telegram_message appelé sans TELEGRAM_TOKEN. Ignoré.")
+            logging.getLogger("nester").warning("send_telegram_message called without TELEGRAM_TOKEN. Ignored.")
             return
         url = f"https://api.telegram.org/bot{settings.telegram_token}/sendMessage"
         data = {
@@ -358,139 +359,139 @@ async def send_telegram_message(chat_id: int, text: str):
             response.raise_for_status()
             
         logger = logging.getLogger("nester")
-        logger.info(f"📤 Message Telegram envoyé à {chat_id}")
+        logger.info(f"📤 Telegram message sent to {chat_id}")
         
     except Exception as e:
         logger = logging.getLogger("nester")
-        logger.error(f"❌ Erreur envoi message Telegram: {str(e)}")
-        # Ne pas faire planter le webhook, juste logger l'erreur
+        logger.error(f"❌ Error sending Telegram message: {str(e)}")
+        # Don't crash the webhook, just log the error
         return
 
 
 async def handle_telegram_command(chat_id: int, command: str, user_id: str):
-    """Traite les commandes Telegram et génère des podcasts."""
+    """Process Telegram commands and generate podcasts."""
     logger = logging.getLogger("nester")
     
     try:
-        # Parser la commande
+        # Parse command
         parts = command.split(' ', 1)
         cmd = parts[0].lower()
         message = parts[1] if len(parts) > 1 else ""
         
-        logger.info(f"🔧 Traitement commande: '{cmd}' avec message: '{message}'")
+        logger.info(f"🔧 Processing command: '{cmd}' with message: '{message}'")
         
-        # Commandes supportées
+        # Supported commands
         if cmd in ['/wellness', '/briefing', '/other', '/others']:
-            # Gérer la variante /others -> /other
+            # Handle /others -> /other variant
             if cmd == '/others':
                 cmd = '/other'
                 intent = 'other'
             else:
-                intent = cmd[1:]  # Enlever le /
+                intent = cmd[1:]  # Remove the /
             
             if not message:
-                await send_telegram_message(chat_id, f"❌ Veuillez fournir un message pour la commande {cmd}\n\nExemple: {cmd} Créez un podcast sur la méditation")
+                await send_telegram_message(chat_id, f"❌ Please provide a message for the {cmd} command\n\nExample: {cmd} Create a podcast about meditation")
                 return
             
-            # Envoyer un message de confirmation
-            await send_telegram_message(chat_id, f"🎙️ Génération d'un podcast {intent} en cours...\n\n📝 Sujet: {message}")
+            # Send confirmation message
+            await send_telegram_message(chat_id, f"🎙️ Generating {intent} podcast...\n\n📝 Topic: {message}")
             
-            # Générer le podcast
+            # Generate podcast
             await generate_telegram_podcast(chat_id, user_id, intent, message)
             
         elif cmd == '/help':
-            help_text = """🤖 <b>Commandes Nestr Bot</b>
+            help_text = """🤖 <b>Nestr Bot Commands</b>
 
-<b>Génération de podcasts:</b>
-• <code>/wellness [message]</code> - Podcast bien-être
-• <code>/briefing [message]</code> - Podcast briefing
-• <code>/other [message]</code> - Podcast dialogue
-• <code>/others [message]</code> - Alias pour /other
+<b>Podcast generation:</b>
+• <code>/wellness [message]</code> - Wellness podcast
+• <code>/briefing [message]</code> - News briefing podcast
+• <code>/other [message]</code> - Dialogue podcast
+• <code>/others [message]</code> - Alias for /other
 
-<b>Exemples:</b>
-• <code>/wellness Créez un podcast sur la méditation matinale</code>
-• <code>/briefing Résumez les actualités tech de cette semaine</code>
-• <code>/other Discutez des tendances IA en 2024</code>
-• <code>/others Je veux un podcast sur la symphonie numéro 5 de Tchaikovsky</code>
+<b>Examples:</b>
+• <code>/wellness Create a podcast about morning meditation</code>
+• <code>/briefing Summarize this week's tech news</code>
+• <code>/other Discuss AI trends in 2024</code>
+• <code>/others I want a podcast about Tchaikovsky's Symphony No. 5</code>
 
-<b>Autres commandes:</b>
-• <code>/help</code> - Affiche cette aide"""
+<b>Other commands:</b>
+• <code>/help</code> - Show this help"""
             
             await send_telegram_message(chat_id, help_text)
             
         else:
-            await send_telegram_message(chat_id, f"❌ Commande inconnue: {cmd}\n\nTapez /help pour voir les commandes disponibles.")
+            await send_telegram_message(chat_id, f"❌ Unknown command: {cmd}\n\nType /help to see available commands.")
             
     except Exception as e:
-        logger.error(f"❌ Erreur traitement commande Telegram: {str(e)}")
-        await send_telegram_message(chat_id, f"❌ Erreur lors du traitement de la commande: {str(e)}")
+        logger.error(f"❌ Error processing Telegram command: {str(e)}")
+        await send_telegram_message(chat_id, f"❌ Error processing command: {str(e)}")
 
 
 async def generate_telegram_podcast(chat_id: int, user_id: str, intent: str, message: str):
-    """Génère un podcast via Telegram en utilisant les pipelines existants."""
+    """Generate a podcast via Telegram using existing pipelines."""
     logger = logging.getLogger("nester")
     
     try:
-        # Obtenir les dépendances
+        # Get dependencies
         openai_manager = get_openai_manager()
         supabase_manager = get_supabase_manager()
         rss_generator = get_rss_generator()
         
-        # Créer le gestionnaire de pipelines
+        # Create pipeline manager
         pipeline_manager = PipelineManager(openai_manager, supabase_manager, rss_generator)
         
-        # Créer un UUID stable à partir de l'ID Telegram
+        # Create stable UUID from Telegram ID
         from uuid import uuid5, NAMESPACE_DNS
         telegram_uuid = uuid5(NAMESPACE_DNS, f"telegram-{user_id}")
         
-        # Résoudre l'utilisateur avec l'UUID généré
+        # Resolve user with generated UUID
         resolved_user_id = supabase_manager.resolve_user(telegram_uuid, None, None)
         
-        # Métadonnées par défaut
+        # Default metadata
         metadata = default_metadata_for_generation(message)
         
-        # Générer le podcast
-        logger.info(f"🎙️ Génération podcast {intent} pour Telegram user {user_id}")
+        # Generate podcast
+        logger.info(f"🎙️ Generating {intent} podcast for Telegram user {user_id}")
         result = await pipeline_manager.generate_podcast(
             user_id=resolved_user_id,
             message=message,
-            lang="fr",  # Par défaut en français
+            lang="fr",  # Default to French
             intent=intent,
             metadata=metadata
         )
         
         if result["status"] == "success":
-            # Succès
-            success_message = f"""✅ <b>Podcast {intent} généré avec succès!</b>
+            # Success
+            success_message = f"""✅ <b>{intent.title()} podcast generated successfully!</b>
 
-🎵 <b>Épisode:</b> {result.get('episode_title', 'Sans titre')}
-📊 <b>Durée:</b> {result.get('duration_sec', 0)} secondes
+🎵 <b>Episode:</b> {result.get('episode_title', 'Untitled')}
+📊 <b>Duration:</b> {result.get('duration_sec', 0)} seconds
 🔗 <b>RSS:</b> {result.get('rss_url', 'N/A')}
 
-Le podcast a été ajouté à votre flux RSS personnel."""
+The podcast has been added to your personal RSS feed."""
             
             await send_telegram_message(chat_id, success_message)
-            logger.info(f"✅ Podcast {intent} généré avec succès pour Telegram user {user_id}")
+            logger.info(f"✅ {intent} podcast generated successfully for Telegram user {user_id}")
             
         else:
-            # Erreur
-            error_message = f"❌ <b>Erreur lors de la génération du podcast {intent}</b>\n\n{result.get('message', 'Erreur inconnue')}"
+            # Error
+            error_message = f"❌ <b>Error generating {intent} podcast</b>\n\n{result.get('message', 'Unknown error')}"
             await send_telegram_message(chat_id, error_message)
-            logger.error(f"❌ Échec génération podcast {intent} pour Telegram user {user_id}: {result.get('message')}")
+            logger.error(f"❌ Failed to generate {intent} podcast for Telegram user {user_id}: {result.get('message')}")
             
     except Exception as e:
-        logger.error(f"❌ Erreur génération podcast Telegram: {str(e)}")
-        await send_telegram_message(chat_id, f"❌ <b>Erreur technique</b>\n\nUne erreur inattendue s'est produite lors de la génération du podcast.")
+        logger.error(f"❌ Error generating Telegram podcast: {str(e)}")
+        await send_telegram_message(chat_id, f"❌ <b>Technical error</b>\n\nAn unexpected error occurred while generating the podcast.")
 
 
-# Inclusion des routeurs
+# Include routers
 app.include_router(webhooks_router)
 
 
-# Gestionnaire d'erreurs global
+# Global error handler
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    """Gestionnaire d'erreurs global pour capturer toutes les exceptions non gérées."""
+    """Global error handler to catch all unhandled exceptions."""
     logging.error(
         json.dumps({
             "action": "unhandled_exception",
@@ -505,8 +506,8 @@ async def global_exception_handler(request: Request, exc: Exception):
         status_code=500,
         content={
             "status": "error",
-            "message": "Une erreur interne s'est produite",
-            "detail": str(exc) if settings.debug else "Erreur interne"
+            "message": "An internal error occurred",
+            "detail": str(exc) if settings.debug else "Internal error"
         }
     )
 

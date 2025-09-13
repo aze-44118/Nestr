@@ -1,4 +1,4 @@
-"""Configuration de l'application Nestr."""
+"""Nestr application configuration."""
 import os
 from typing import Literal, Optional
 
@@ -8,7 +8,7 @@ from .prompts import load_prompt
 
 
 class Settings(BaseSettings):
-    """Configuration de l'application avec validation des variables d'environnement."""
+    """Application configuration with environment variable validation."""
     
     # OpenAI
     openai_api_key: str = Field(..., env="OPENAI_API_KEY")
@@ -25,8 +25,8 @@ class Settings(BaseSettings):
     default_lang: Literal["fr", "en"] = Field(default="fr", env="DEFAULT_LANG")
     
     # App
-    app_name: str = "Nestr Noesis API"
-    app_version: str = "0.1.0"
+    app_name: str = "Nestr API"
+    app_version: str = "1.0.0"
     debug: bool = Field(default=False, env="DEBUG")
     
     # Server
@@ -40,56 +40,56 @@ class Settings(BaseSettings):
     log_level: str = Field(default="INFO", env="LOG_LEVEL")
     log_format: str = Field(default="detailed", env="LOG_FORMAT")  # simple, detailed, json
 
-    # RSS (paramètres centralisés)
+    # RSS (centralized parameters)
     rss_feed_title: str = Field(default="Nestr – {user_id}", env="RSS_FEED_TITLE")
-    rss_feed_description: str = Field(default="Podcasts personnalisés de {user_id}", env="RSS_FEED_DESCRIPTION")
+    rss_feed_description: str = Field(default="Personalized podcasts for {user_id}", env="RSS_FEED_DESCRIPTION")
     rss_author: str = Field(default="Nestr", env="RSS_AUTHOR")
     rss_language: Literal["fr", "en"] = Field(default="fr", env="RSS_LANGUAGE")
     rss_category: str = Field(default="Education", env="RSS_CATEGORY")
     rss_cover_url: str = Field(default="", env="RSS_COVER_URL")
-    rss_site_url: str = Field(default="https://nest.noesis.app", env="RSS_SITE_URL")
+    rss_site_url: str = Field(default="https://nestr.app", env="RSS_SITE_URL")
     rss_ttl_minutes: int = Field(default=60, env="RSS_TTL_MINUTES")
 
-    # Génération (centralisée)
+    # Generation (centralized)
     gen_default_model: str = Field(default="gpt-4o-mini", env="GEN_DEFAULT_MODEL")
     gen_default_lang: Literal["fr", "en"] = Field(default="fr", env="GEN_DEFAULT_LANG")
 
-    # TTS (centralisé) pour 'other' (dialogué)
-    # Présentateur Nestr (homme) = speaker_1
+    # TTS (centralized) for 'other' (dialogue)
+    # Nestr presenter (male) = speaker_1
     tts_model_other: str = Field(default="gpt-4o-mini-tts", env="TTS_MODEL_OTHER")
     tts_voice_other_speaker_1: str = Field(default="alloy", env="TTS_VOICE_OTHER_SPK1")
-    # Chroniqueuse (femme) = speaker_2
+    # Co-host (female) = speaker_2
     tts_voice_other_speaker_2: str = Field(default="onyx", env="TTS_VOICE_OTHER_SPK2")
 
-    # Noms des prompts TTS dans prompts_tts.json
+    # TTS prompt names in prompts_tts.json
     tts_prompt_other_speaker_1: str = Field(default="other_tts_speaker_1", env="TTS_PROMPT_OTHER_SPK1")
     tts_prompt_other_speaker_2: str = Field(default="other_tts_speaker_2", env="TTS_PROMPT_OTHER_SPK2")
     
-    # Telegram (optionnel pour permettre le démarrage sans variables)
+    # Telegram (optional to allow startup without variables)
     telegram_token: Optional[str] = Field(default=None, env="TELEGRAM_TOKEN")
     telegram_service_id: Optional[str] = Field(default=None, env="TELEGRAM_SERVICE_ID")
     
     class Config:
         env_file = ".env"
         case_sensitive = False
-        extra = "ignore"  # Ignorer les variables supplémentaires
+        extra = "ignore"  # Ignore additional variables
 
 
-# Instance globale des paramètres
+# Global settings instance
 settings = Settings()
 
-# Configuration des logs
+# Log configuration
 LOG_COLORS = {
     "DEBUG": "\033[36m",    # Cyan
-    "INFO": "\033[32m",     # Vert
-    "WARNING": "\033[33m",  # Jaune
-    "ERROR": "\033[31m",    # Rouge
+    "INFO": "\033[32m",     # Green
+    "WARNING": "\033[33m",  # Yellow
+    "ERROR": "\033[31m",    # Red
     "CRITICAL": "\033[35m", # Magenta
     "RESET": "\033[0m"      # Reset
 }
 
 
-# Fonction pour charger les prompts depuis les fichiers
+# Function to load prompts from files
 def get_prompt(prompt_name: str) -> str:
-    """Récupère un prompt par son nom depuis les fichiers texte."""
+    """Retrieve a prompt by name from text files."""
     return load_prompt(prompt_name)
