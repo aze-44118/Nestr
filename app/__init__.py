@@ -1,3 +1,4 @@
-from .main import app
+"""Package principal de l'application Nestr Noesis."""
 
-__all__ = ["app"]
+__version__ = "0.1.0"
+__author__ = "Nestr Team"
