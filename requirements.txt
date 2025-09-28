@@ -28,3 +28,4 @@ psutil==7.0.0
 
 # Telegram Bot API
 httpx==0.27.0
+
